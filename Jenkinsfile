@@ -10,18 +10,28 @@ pipeline {
             steps {
                 sh 'mvn -B -DskipTests compile package' 
             }
+        }
+        stage('test') {
             step {
                 sh 'mvn -B -DskipTests test package'
             }
+        }
+        stage('package') {
             step {
                 sh 'mvn -B -DskipTests package package'
             }
+        }
+        stage('Build') {
             step { 
                 sh 'mvn -B -DskipTests install package'
             }
+        }
+        stage('deploy') {
             step {
                 sh 'mvn -B -DskipTests deploy package'
             }
+        
+        
         }
     }
 }
