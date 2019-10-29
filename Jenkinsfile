@@ -20,7 +20,7 @@ pipeline {
                 sh 'mvn -B -DskipTests install package'
             }
             step {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B -DskipTests deploy package'
             }
         }
     }
