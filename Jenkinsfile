@@ -10,7 +10,7 @@ pipeline {
       steps {
         sh '''ls 
 oc project react-intro2
-oc start-build simple-java-maven-app  --follow --wait --build-arg=${BUILD_NUMBER}'''
+oc start-build simple-java-maven-app  --follow --wait -e OUTPUT_IMAGE=${BUILD_NUMBER}'''
       }
     }
 
