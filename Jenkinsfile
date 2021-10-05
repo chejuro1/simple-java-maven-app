@@ -35,12 +35,7 @@ dockerlint Dockerfile'''
 
       }
       steps {
-        sh '''
-
-helm repo add simple-java-maven-app https://artifactory-tools.itzroks-662002dv9g-6il6rv-6ccd7f378ae819553d37d5f2ee142bd6-0000.mex01.containers.appdomain.cloud/artifactory/simple-java-maven-app
---username admin --password AP6UcCbxbVCtNoqmBqXzqdhhLnVP7yLp1rZYAN
-helm repo update
-'''
+        sh 'ls '
       }
     }
 
