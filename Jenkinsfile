@@ -1,38 +1,31 @@
 pipeline {
-    agent {
-        label 'maven'
-//         docker {
-//             image 'maven:3-alpine'
-//             args '-v /root/.m2:/root/.m2'
-//         }
+  agent {
+    node {
+      label 'maven'
     }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
-            }
-        }
-         stage('verify') {
-            steps {
-                sh 'mvn  verify '
-            }
-        }
-        stage('Test') { 
-            steps {
-                sh 'mvn test' 
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml' 
-                }
-            }
-        
-        }
-        stage('package') {
-            steps {
-                sh 'mvn  package'
-            }
-        }
-       
+
+  }
+  stages {
+    stage('Release') {
+      steps {
+        sh '''ls 
+oc project react-intro2
+oc start-build greeting-console  --follow --wait'''
+      }
     }
+
+    stage('Docker_lint') {
+      agent {
+        node {
+          label 'nodejs'
+        }
+
+      }
+      steps {
+        sh '''npm install -g dockerlint
+dockerlint Dockerfile'''
+      }
+    }
+
+  }
 }
