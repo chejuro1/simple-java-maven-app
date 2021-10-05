@@ -28,7 +28,12 @@ dockerlint Dockerfile'''
     }
 
     stage('Set parameter') {
-      agent any
+      agent {
+        node {
+          label 'tools-image'
+        }
+
+      }
       steps {
         sh 'properties([[$class: \'JiraProjectProperty\'], [$class: \'BuildConfigProjectProperty\', name: \'\', namespace: \'\', resourceVersion: \'\', uid: \'\'], parameters([string(\'git-url\'), string(defaultValue: \' master\', name: \' git-revision\'), string(defaultValue: \'/source\', name: \'source-dir\'), string(defaultValue: \'""\', name: \'image-url\'), string(defaultValue: \'""\', name: \'app-name\'), string(defaultValue: \'"route"\', name: \'deploy-ingress-type\'), string(description: \'The url of the helm repository\', name: \'helm-curl\')])])'
       }
