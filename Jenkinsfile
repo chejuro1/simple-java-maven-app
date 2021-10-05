@@ -27,5 +27,11 @@ dockerlint Dockerfile'''
       }
     }
 
+    stage('Add Helm Repo') {
+      steps {
+        sh 'helm repo add shailendra ${repo}'
+      }
+    }
+
   }
 }
