@@ -28,6 +28,12 @@ dockerlint Dockerfile'''
     }
 
     stage('Add Helm Repo') {
+      agent {
+        node {
+          label 'helm'
+        }
+
+      }
       steps {
         sh '''
 
