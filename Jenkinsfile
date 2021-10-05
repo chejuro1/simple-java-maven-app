@@ -36,6 +36,16 @@ dockerlint Dockerfile'''
       }
       steps {
         sh 'properties([[$class: \'JiraProjectProperty\'], [$class: \'BuildConfigProjectProperty\', name: \'\', namespace: \'\', resourceVersion: \'\', uid: \'\'], parameters([string(\'git-url\'), string(defaultValue: \' master\', name: \' git-revision\'), string(defaultValue: \'/source\', name: \'source-dir\'), string(defaultValue: \'""\', name: \'image-url\'), string(defaultValue: \'""\', name: \'app-name\'), string(defaultValue: \'"route"\', name: \'deploy-ingress-type\'), string(description: \'The url of the helm repository\', name: \'helm-curl\')])])'
+        sh '''set +x
+        if [[ -n "${GIT_USERNAME}" ]] && [[ -n "${GIT_PASSWORD}" ]]; then
+            git clone "$(echo $(params.git-url) | awk -F \'://\' \'{print $1}\')://${GIT_USERNAME}:${GIT_PASSWORD}@$(echo $(params.git-url) | awk -F \'://\' \'{print $2}\')" $(params.source-dir)
+        else
+            set -x
+            git clone $(params.git-url) $(params.source-dir)
+        fi
+        set -x
+        cd $(params.source-dir)
+        git checkout $(params.git-revision)'''
       }
     }
 
