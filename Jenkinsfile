@@ -30,14 +30,14 @@ dockerlint Dockerfile'''
     stage('Helm') {
       agent {
         node {
-          label 'maven'
+          label 'nodejs'
         }
 
       }
       steps {
-        sh '''ls 
-
-pwd '''
+        sh '''
+npm install nodejs-helm
+helm version'''
       }
     }
 
