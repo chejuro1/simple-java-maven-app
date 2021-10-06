@@ -30,7 +30,7 @@ dockerlint Dockerfile'''
     stage('Set parameter') {
       agent {
         node {
-          label 'tools-image'
+          label 'maven'
         }
 
       }
