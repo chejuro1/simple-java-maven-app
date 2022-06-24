@@ -1,0 +1,84 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+pool:
+  name: Default
+  vmImage: 'dockeragent:latest'
+# Maven package Java project Web App to Linux on Azure
+# Build your Java project and deploy it to Azure as a Linux web app
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+
+variables:
+
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: '56be19f6-900f-4aa8-a749-cbfa1b027c30'
+
+  # Web app name
+  webAppName: 'chejuro-app-name'
+
+  # Environment name
+  environmentName: 'stage'
+
+  # Agent VM image name
+  vmImageName: 'dockeragent:latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: MavenPackageAndPublishArtifacts
+    displayName: Maven Package and Publish Artifacts
+    pool:
+      name: Default
+      vmImage: $(vmImageName)
+    
+
+    steps:
+    - task: SonarQubePrepare@5
+      inputs:
+        SonarQube: 'sonar'
+        scannerMode: 'Other'
+        extraProperties: |
+          # Additional properties that will be passed to the scanner,
+          # Put one key=value per line, example:
+          sonar.exclusions=**/*.bin
+          sonar.projectKey=TEST_DC_TEST_DC_AYGRLp5PgC_UkggmKnWi
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'package'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'latest'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/target/*.?(war|jar)'
+        TargetFolder: $(Build.ArtifactStagingDirectory)
+    - upload: $(Build.ArtifactStagingDirectory)
+      artifact: drop
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+       targetPath: '$(Pipeline.Workspace)'
+       publishLocation: 'pipeline'
+
+    
+    # Publish Quality Gate Result task
+    - task: SonarQubePublish@5
+      inputs:
+       pollingTimeoutSec: '300'
