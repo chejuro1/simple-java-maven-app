@@ -26,7 +26,7 @@ variables:
   environmentName: 'stage'
 
   # Agent VM image name
-  vmImageName: 'dockeragent:latest'
+  vmImageName: 'ubuntu:latest'
 
 stages:
 - stage: Build
@@ -35,7 +35,7 @@ stages:
   - job: MavenPackageAndPublishArtifacts
     displayName: Maven Package and Publish Artifacts
     pool:
-      name: Default
+    
       vmImage: $(vmImageName)
     
 
